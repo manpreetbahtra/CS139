@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <title> Categories </title>
+    <script src='static/js/jquery-3.6.3.min.js'></script>
+    <script src='static/js/todo.js'></script>
+    <style>
+        .red   { color: #FF0000; }
+        .green { color: #00FF00; }
+        .blue  { color: #0000FF; }
+        </style>
+</head>
+
+<body>
+    <h1>NEW LISTS</h1>
+
+    <form action="/newList" method="POST">
+        <label for="newCategory">Item Name:</label>
+        <input type="text" name="newCategory" id="newCategory" required>
+        <input type="submit" value="Enter">
+    </form>
+
+    <table>
+        <tbody>
+            {% for entry in manpreetListItems %}
+            <tr {% if entry.completed %}class="completed"{% endif %}>
+                <td{% if entry.completed %}style="text-decoration: line-through"{% endif %}>{{ entry.name }}</td>
+                <!-- <td>{{ entry.name }}</td> -->
+                <td>
+                    <div id="complete">
+                    <!-- <form class="complete-form">
+                        <input type="hidden" name="item_id" value="{{ entry.id }}" id ={{entry.id}}>
+                        <button class="complete-btn" id="{{ entry.id }}" onclick="loadDoc()">Complete</button>
+                    </form> -->
+                    <button class="complete-btn" id="{{ entry.id }}">Complete</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+
+            <!-- <script>
+                function loadDoc() {
+                  const xhttp = new XMLHttpRequest();
+                  xhttp.onload = function() {
+                    document.getElementById("complete").innerHTML = this.responseText;
+                  }
+                  xhttp.open("GET", "ajax.txt");
+                  xhttp.send();
+                }
+                </script>
+             -->
+        </tbody>
+    </table>
+</body>
+</html>

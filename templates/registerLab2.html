@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+
+<head>
+    <meta charset="UTF-8">
+    <title> Register </title>
+    <script src='static/js/jquery-3.6.3.min.js'></script>
+    <script src='static/js/registration.js'></script>
+</head>
+
+<body>
+    <header> Register </header>
+    <form action='register', methods = 'POST', methods ='GET'>
+        <select name='title'>
+            <option value='Dr'>Dr</option>
+            <option value='Miss'>Miss</option>
+            <option value='Mr'>Mr</option>
+            <option value='Mrs'>Mrs</option>
+        </select>
+
+        <label for="Fullname">Full Name</label>
+        <input name="Fullname" >
+        <label for="Email">Email</label>
+        <input name="Email" >
+        <label for="username">Username</label>
+        <input name="username">
+        <label for="password">Password</label>
+        <input type='password' name='password'>
+        <input type='submit' value='Register!'>
+        
+    </form>
+
+</body>
+</html>

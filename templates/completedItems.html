@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+
+<head>
+    <meta charset="UTF-8">
+    <title> Completed Items </title>
+    <script src='static/js/jquery-3.6.3.min.js'></script>
+    <script src='static/js/todo.js'></script>
+
+</head>
+
+
+<body>
+    <script type="text/javascript" charset="utf-8">
+        document.getElementsById("table2").style.color= "green"; 
+        document.getElementsById("table1").innerHTML= "Completed it"; 
+    </script>
+
+    <h1> LISTS</h1>
+
+
+    <table id="table1">
+        <!-- <thead>
+            <tr>
+                <th width='200px'>All lists</th>
+            </tr>
+        </thead> -->
+        <tbody>
+            {% for entry in manpreetLists %}
+            <tr>
+                <td>{{entry.name}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>no entries</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table id="table2">
+        <tbody>
+            {% for entry in manpreetListItems %}
+            <tr>
+                <td>{{entry.name}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>no entries</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href ="/query">QUERY</a>
+</body>
+</html>
+
+
+
+
+

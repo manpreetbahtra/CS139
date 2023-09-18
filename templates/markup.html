@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+		<h1>XSS!</h1>
+		
+		<p>
+			{% autoescape false %}
+			Welcome {{ xss }}
+			{% endautoescape%}
+		</p>
+		<p>
+			Let's talk about Cross Site Scripting.
+			Try typing <strong> <code>{{ scriptcmd }}</code></strong>
+			as your name in the form you just used.
+		</p>
+		<p>
+			Let's talk about Cross Site Scripting.
+			Try typing <strong> <code>{{ scriptcmd2 }}</code></strong>
+			as your name in the form you just used.
+		</p>
+
+		<a href="/">HOME</a>
+	</body>
+</html>

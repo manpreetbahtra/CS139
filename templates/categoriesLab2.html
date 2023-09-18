@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="static/css/main.css" type="text/css" >
+    <title> Categories </title>
+</head>
+
+<body>
+    <h1>All categories</h1>
+    <a href="/work">Work</a>
+    <a href="/home">Home</a>
+
+
+    <form action='newList' method = "POST">
+        <p>New Category name</p>
+        <input name="newCategory" >
+        <input type='submit' value='Create!'>
+    </form>
+
+    
+    <table>
+        <thead>
+            <tr>
+                <th width='200px'>All lists</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in manpreetLists %}
+            <tr>
+                <td>{{entry.name}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>no entries</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table>
+        <tbody>
+            {% for entry in manpreetListItems %}
+            <tr>
+                <td>{{entry.name}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>no entries</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
