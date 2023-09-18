@@ -1,34 +1,89 @@
 <!DOCTYPE html>
-<html lang = 'en'>
-
-<head>
-    <meta charset="UTF-8">
-    <title> Register </title>
-    <script src='static/js/jquery-3.6.3.min.js'></script>
-    <script src='static/js/registration.js'></script>
-</head>
-
-<body>
-    <header> Register </header>
-    <form action='register' method = 'POST'>
-        <select name='title'>
-            <option value='Dr'>Dr</option>
-            <option value='Miss'>Miss</option>
-            <option value='Mr'>Mr</option>
-            <option value='Mrs'>Mrs</option>
-        </select>
-
-        <p>Full Name</p>
-        <input name="Fullname" >
-        <p>Email</p>
-        <input name="Email" >
-        <p>Username</p>
-        <input name="username">
-        <p>Password</p>
-        <input type='password' name='password'>
-        <input type='submit' value='Register!'>
+<html lang="en">
+    <head>
+        <title>Register </title>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <script src='static/js/csrf.js'></script> 
+        <!--importing the javascript file that contains function for generating csrf token. -->
+        <script src='static/js/jquery-3.6.3.min.js'></script>
+        <script src='static/js/register.js'></script>
         
-    </form>
+        <script>
+          function generate_csrf_token() {
+            var chars = '0123456789abcdef';
+            var token = '';
+            for (var i = 0; i < 32; i++) {
+              var rand_index = Math.floor(Math.random() * chars.length);
+              token += chars[rand_index];
+            }
+            return token;
+          }
+        </script>
 
-</body>
+<!-- This code generates a new CSRF token, and then adds it as a hidden input field to every form on the page. If a CSRF input field 
+  already exists in the form, it updates its value with the new token. This function generates a random string of 32 characters that 
+  can be used as a CSRF token. Generate a new token every time a form is loaded to help prevent cross-site request forgery attacks- 
+  used as a security measure.-->          
+          
+    </head>
+    <body>
+
+      <div class="navbar-end">
+        <a href="/" class="navbar-item">
+            Go back 
+        </a>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <div class="notification is-danger">
+              {{ messages[-1] }} 
+          </div>
+          <!--Javascript code below to remove the flash after a few seconds-->
+          <script>
+              // Wait for 5 seconds and then remove the message
+              setTimeout(function() {
+                var message = document.querySelector('.notification');
+                message.parentNode.removeChild(message);
+              }, 6000);
+            </script>
+      {% endif %}
+      {% endwith %}
+
+        <form action="/register" method = "post" id ="registration-form">
+            <label for = "username">Username:</label>
+            <input type="text" name="username" required maxlength="10"><br>
+            <label for="email">Email:</label>
+            <input type="email" name="email" required><br>
+            <label for="user-type">User Type:</label>
+            <select name="user-type" required>
+              <option value="attendee">Attendee</option>
+              <option value="organiser">Organiser</option>
+            </select> <br>
+            <div id="registration-code-fields" style="display:none;"></div>
+            <label for="registration-code">Registration Code:</label>
+            <input type="text" name="registration-code"><br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" required minlength="8" maxlength="13"><br>
+            <label for="confirm_password">Confirm Password: </label>
+            <input type="password" name="confirm_password" required minlength="8" maxlength="13"><br>
+            <input type="hidden" name="csrf_token" value="" >
+            <button type="submit">Register</button>
+        </form>
+        <div id="registration-status"></div>
+        
+
+
+        <script>
+            var csrf_input = document.querySelector('input[name="csrf_token"]');
+            var csrf_token = generate_csrf_token();
+            csrf_input.value = csrf_token;
+        </script>
+
+        
+    </body>
 </html>
+
+<!--I have added basic client side validation such as min length, max length, required
+  for different form fields so that if these checks are not successful, server side processing
+is not done, hence saving unnecessary computation.-->

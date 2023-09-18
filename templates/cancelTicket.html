@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8"> -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&display=swap" rel="stylesheet">
+        
+        <title>The Giginator's Cancel Ticket</title>
+    </head>
+    <body>
+        <h1>Computer Science Event Ticketer</h1>
+        
+        <!-- this will get me any messages that are flashed-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[-1] }} 
+            </div>
+            <!--Javascript code below to remove the flash after a few seconds-->
+            <script>
+                // Wait for 5 seconds and then remove the message
+                setTimeout(function() {
+                  var message = document.querySelector('.notification');
+                  message.parentNode.removeChild(message);
+                  window.location.href = '/homePage';
+                }, 2000);
+              </script>
+        {% endif %}
+        {% endwith %}
+
+
+    </body>
+</html>
+
+<!-- purpose of this template- to display flashed messages  -->

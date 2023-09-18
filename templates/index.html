@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>My awesome To-do list app</title>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <title>The Giginator</title>
     </head>
     <body>
-        <h1>This is my to do list application.</h1>
-        <p>Dont have an account? Register here</p>
-        <a href="/register">Register</a>
-        <a href="/login">Login</a>
-        <a href="/layout">Layout</a>
-
+        <h1>Computer Science Event Ticketer</h1>
+        <p>If you have an account, log in below. If you don't then create an account to start organising or buying tickets!</p>
+        <form action="login" class="login-form">
+            <p><input type="submit" value="Login!" class="button-lr"></p>
+        </form>
+        <form action="register" class="login-form">
+            <p><input type="submit" value="Register!" class="button-lr"></p>
+        </form>
+        <h2>README.md</h2>
+        <pre>{{README}}</pre>
+        <h2>requirements.txt</h2>
+        <pre>{{requirements}}</pre>
     </body>
 </html>
+
+<!-- class="button-lr" used for css styling.  -->

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <script src='static/js/jquery-3.6.3.min.js'></script>
+        <script src='static/js/buyTicketsFailed.js'></script>  
+        <title>The Giginator</title>
+        
+    </head>
+    <body>
+        <h1>Computer Science Event Ticketer</h1>
+
+        <form action="/buyTickets/{{ event_id }}" method="POST">
+            <label for="ticketsBought">Tickets Bought:</label>
+            <select name="ticketsBought" required>
+                {% for i in range(1, event.availableTickets + 1) %} <!--allows the user to select the number of tickets they want to buy for a specific event. -->
+                <option value="{{ i }}">{{ i }}</option> <!--for loop using the Jinja template syntax-->
+                {% endfor %}
+            </select> <br>
+    
+            <input type="submit" value="Buy">
+        </form>
+
+        <!-- this will get me any messages that are flashed-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[-1] }} 
+            </div>
+            <!--Javascript code below to remove the flash after a few seconds-->
+            <script>
+                // Wait for 5 seconds and then remove the message
+                setTimeout(function() {
+                    var message = document.querySelector('.notification');
+                    message.parentNode.removeChild(message);
+                    window.location.href = '/homePage';
+                }, 3000);
+                </script>
+        {% endif %}
+        {% endwith %}
+
+    </body>
+</html>

@@ -1,22 +1,58 @@
 <!DOCTYPE html>
-<html lang = 'en'>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <script src='static/js/jquery-3.6.3.min.js'></script>
+        <script src='static/js/login.js'></script>
 
-<head>
-    <meta charset="UTF-8">
-    <title> Login </title>
-</head>
+        <title>The Giginator's Login</title>
+    </head>
+    
+    <body>
 
-<body>
-    <header> Login </header>
-    <form action='login'>
-        <p>Username</p>
-        <input name="username">
-        <p>Password</p>
-        <input type='password' name='user_password'>
-        <input type='submit' value='Login!'>
-        <a href="/categories">Categories</a>
+        <div class="navbar-end">
+            <a href="/" class="navbar-item">
+                Go back 
+            </a>
+            <a href="/validEmail" class="navbar-item">
+                Email verification link expired? Click here
+            </a>
+        </div>
+
+
+        <h1>Computer Science Event Ticketer</h1>
+        <p>If you have an account, log in below. Otherwise register <a href ="{{url_for('register')}}">here</a></p>
+        <!-- this will get me any messages that are flashed-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }} 
+            </div>
+            <!--Javascript code below to remove the flash after a few seconds-->
+            <script>
+                // Wait for 5 seconds and then remove the message
+                setTimeout(function() {
+                  var message = document.querySelector('.notification');
+                  message.parentNode.removeChild(message);
+                }, 5000);
+              </script>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/login" method="POST" class="login-form">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required><br>
         
-    </form>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required> <br>
 
-</body>
+            <label for="user-type">User Type:</label>
+            <select name="user-type" required>
+              <option value="attendee">Attendee</option>
+              <option value="organiser">Organiser</option>
+            </select> <br> 
+        
+            <input type="submit" value="Login" id ='login' class="button-lr">
+        </form>
+    </body>
 </html>

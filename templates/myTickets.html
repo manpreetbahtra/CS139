@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <title>The Giginator's Tickets</title>
+    </head>
+    <body>
+        <div class="navbar-end">
+            <a href="/homePage" class="navbar-item">
+                Go back 
+            </a>
+        </div>
+
+
+        
+        <h1>Computer Science Event Ticketer</h1>
+        <!-- this will get me any messages that are flashed-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[-1] }} 
+            </div>
+            <!--Javascript code below to remove the flash after a few seconds-->
+            <script>
+                // Wait for 5 seconds and then remove the message
+                setTimeout(function() {
+                  var message = document.querySelector('.notification');
+                  message.parentNode.removeChild(message);
+                }, 5000);
+              </script>
+        {% endif %}
+        {% endwith %}
+
+
+        <h2 >My Tickets</h2>
+        {% if ticketsOfUser %}
+        <ul>
+            {%for ticket in ticketsOfUser%}
+            <li> 
+                <h3 class="enlargeable-text">{{ ticket.event.title }}</h3>
+                <p class="enlargeable-text">Ticket ID: {{ ticket.id }}</p>
+                <p class="enlargeable-text">Tickets Bought: {{ ticket.ticketsBought }}</p>
+                <!-- <img src="{{ url_for('barcode', value=ticket.id) }}" alt="Barcode"> -->
+                <a href="{{ url_for('barcode', value=ticket.id) }}">View Barcode</a>
+
+            </li>
+            {%endfor%}
+        </ul>
+        {%else %}
+        <p>You have not bought tickets.</p>
+        {%endif%}
+
+    </body>
+</html>
+
+<!--Displaying the tickets. If the user has tickets, they are displayed as a list of items, each showing the event title, ticket ID, number of tickets bought, and a link to view 
+    the barcode for the ticket. If the user does not have any tickets, a message is displayed-->

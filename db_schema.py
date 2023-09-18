@@ -1,7 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
-from flask_login import LoginManager, login_user, current_user, logout_user, login_required
+from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
 from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 app = Flask(__name__)
@@ -10,82 +11,169 @@ app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///example.db'
 db = SQLAlchemy(app)
 
 # a model of a user for the database
-class User(db.Model, UserMixin):
-    __tablename__='users'
+class UserAttendee(db.Model, UserMixin):
+    __tablename__='usersa'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True)
-    password = db.Column(db.String(20))
+    #password = db.Column(db.String(20))
+    password_hash=db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True)
+    userType = db.Column(db.String(10))
+    is_organiser = db.Column(db.Boolean, default=False)
+    confirmed= db.Column(db.Boolean, default=False)
 
-    def __init__(self, username, password):  
+
+
+    def __init__(self, username, password_hash, email, userType):  
         self.username=username
-        self.password=password #i added
+        self.password_hash=password_hash #i added
+        self.email=email
+        self.userType=userType
 
-# a model of a list for the database
-# it refers to a user
-class List(db.Model):
-    __tablename__='lists'
+    def get_id(self):
+        return self.id
+    
+    @staticmethod
+    def getUser(id):
+        return UserAttendee.allUsers[id]
+    
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+    
+    def is_organiser(self):
+        return self.userType == 'organiser'
+    
+    @staticmethod
+    def loginUser(username, password):
+        userRecord = UserAttendee.query.filter_by(username=username).first()
+
+        if not userRecord:
+            return None
+        #print(user)
+        isValid = check_password_hash(userRecord.password_hash, password)
+        if isValid:
+            user = UserAttendee(userRecord.id, userRecord.username, userRecord.password_hash)
+            UserAttendee[userRecord.id] = user
+            return user
+
+# a model of a user for the database
+class UserOrganiser(db.Model, UserMixin):
+    __tablename__='userso'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text())
-    user_id = db.Column(db.Integer)  # this ought to be a "foreign key"
+    username = db.Column(db.String(20), unique=True)
+    #password = db.Column(db.String(20))
+    password_hash=db.Column(db.String(50))
+    email = db.Column(db.String(50), unique=True)
+    userType = db.Column(db.String(10))
+    is_organiser = db.Column(db.Boolean, default=True)  # set default value to True
+    confirmed= db.Column(db.Boolean, default=False)#is the user's email confirmed?
 
-    def __init__(self, name, user_id):
-        self.name=name
-        self.user_id = user_id
 
-# a model of a list item for the database
-# it refers to a list
-class ListItem(db.Model):
-    __tablename__='items'
+    def __init__(self, username, password_hash, email, userType):  
+        self.username=username
+        self.password_hash=password_hash #i added
+        self.email=email
+        self.userType=userType
+        ##self.is_authenticated = True
+        ##self.is_active = True
+        ##self.is_anonymous = False
+
+    def get_id(self):
+        return self.id
+    
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+    
+    def is_organiser(self):
+        return self.userType == 'organiser'
+    
+    @staticmethod
+    def getUser(id):
+        return UserOrganiser.allUsers[id]
+    
+    @staticmethod
+    def loginUser(username, password):
+        userRecord = UserOrganiser.query.filter_by(username=username).first()
+
+        if not userRecord:
+            return None
+        #print(user)
+        isValid = check_password_hash(userRecord.password_hash, password)
+        if isValid:
+            user = UserOrganiser(userRecord.id, userRecord.username, userRecord.password_hash)
+            UserOrganiser[userRecord.id] = user
+            return user
+        
+# a model of a event for the database
+class Event(db.Model):
+    __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text())
-    list_id = db.Column(db.Integer)  # this ought to be a "foreign key"
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(500))
+    start_time = db.Column(db.DateTime, nullable=False)
+    location = db.Column(db.String(100))
+    organiser_id = db.Column(db.Integer, db.ForeignKey('userso.id'))
+    organiser = db.relationship('UserOrganiser', backref='events')
+    capacity = db.Column(db.Integer, nullable =False)
+    availableTickets = db.Column(db.Integer, nullable =False)
+    is_cancelled = db.Column(db.Boolean, default=False)
+    duration = db.Column(db.Integer)
+    #with backref relationship I can access all the events associated with that organizer by accessing organiser.events.
 
-    def __init__(self, name, list_id):
-        self.name=name
-        self.list_id=list_id
 
+    def __init__(self, title, description, start_time, location, organiser_id, capacity, availableTickets, is_cancelled, duration):
+        self.title = title
+        self.description = description
+        self.start_time = start_time
+        self.location = location
+        self.organiser_id = organiser_id
+        self.capacity = capacity
+        self.availableTickets = availableTickets
+        self.is_cancelled = is_cancelled
+        self.duration = duration
+
+
+class Ticket(db.Model):
+    __tablename__ = 'tickets'
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    event = db.relationship('Event', backref='tickets')
+    usernameO = db.Column(db.String, db.ForeignKey('userso.username'))
+    userO = db.relationship('UserOrganiser', backref='tickets')
+    username = db.Column(db.String, db.ForeignKey('usersa.username'))
+    userA = db.relationship('UserAttendee', backref='tickets')
+    email = db.Column(db.String(120))
+    ticketsBought = db.Column(db.Integer, nullable =False)
+    #with backref relationship I can access all the events associated with that organizer by accessing organiser.events.
+
+
+    def __init__(self, event_id, usernameO, username, email, ticketsBought):
+        self.event_id = event_id
+        self.usernameO=usernameO
+        self.username=username
+        self.email=email
+        self.ticketsBought = ticketsBought
+
+
+db.create_all()
 # put some data into the tables
 def dbinit():
     user_list = [
-        User("Felicia", 'them'), 
-        User("Petra", 'any'),
-        User("Manpreet", 'myself')
         ]
     db.session.add_all(user_list)
-    
-
-    # find the id of the user Felicia
-    felicia_id = User.query.filter_by(username="Felicia").first().id
-    manpreet_id = User.query.filter_by(username="Manpreet").first().id
-     
-
-    all_lists = [
-        List("Shopping",felicia_id), 
-        List("Chores",felicia_id),
-        List("Things", manpreet_id),
-        #add a comment here that a comma wasnt present in second line i inserted it
-        List("Work",manpreet_id)
-        ]
-    db.session.add(List("cwks",3)) # it displays cwks at the top of the list.
-    db.session.add_all(all_lists)
-
-    # find the ids of the lists Chores and Shopping
-
-    chores_id = List.query.filter_by(name="Chores").first().id
-    shopping_id= List.query.filter_by(name="Shopping").first().id
-    work_id=List.query.filter_by(name="Work").first().id
-    things_id=List.query.filter_by(name="Things").first().id
-
-    all_items = [
-        ListItem("Potatoes",shopping_id), 
-        ListItem("Shampoo", shopping_id),
-        ListItem("Wash up",chores_id), 
-        ListItem("Vacuum bedroom",chores_id),
-        ListItem("CS139",work_id),
-        ListItem("CWKs", things_id)
-        ]
-
-    db.session.add_all(all_items)
 
     # commit all the changes to the database file
     db.session.commit()

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+    <script src='static/js/jquery-3.6.3.min.js'></script>
+    <script src='static/js/cancelTicket.js'></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">     <!-- jQuery UI CSS file -->
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>     <!--  jQuery UI library -->
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>     <!--  jQuery resizable library -->
+
+</head>
+
+    <body>
+
+        <div id="buttons-container"> <!--for jquery UI/ animations-->
+            <button id='show' class="button-lr">Show Images</button>
+            <button id='hide' class="button-lr">Hide Images</button>
+            <button id='slide' class="button-lr">Slide Images</button>
+            <button id='fade' class="button-lr">Fade Images</button>
+        </div>
+
+
+        <!-- this will get me any messages that are flashed-->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[-1] }} <!--get the last flashed message-->
+            </div>
+            <!--Javascript code below to remove the flash after a few seconds-->
+            <script>
+                // Wait for 5 seconds and then remove the message
+                setTimeout(function() {
+                    var message = document.querySelector('.notification');
+                    message.parentNode.removeChild(message);
+                    window.location.href = '/homePage';
+                }, 7000);
+                </script>
+                
+        {% endif %}
+        {% endwith %}
+        
+
+        <div class="navbar-end">
+            
+            {% if current_user.is_authenticated %}
+            <a href="/logout" class="navbar-item" id ="logoutLink">
+                Logout
+            </a>
+
+            <a href="/myTickets" class="navbar-item">
+                My Tickets
+            </a>
+            {% endif %}
+            
+            <a href="/createEvent" class="navbar-item" id = 'createEventLink'>
+                Create Event!!
+            </a>
+
+            <a href="/promoteAttendeeToOrganiser" class="navbar-item" id = 'promote'>
+                Promote Attendee To Organiser 
+            </a>
+            
+        </div>
+        
+        <h2>Hello {{username}}!</h2>
+
+        <table class ="table table-striped">
+            <thead>
+                <tr>
+                    <th width='90px'>All Events</th>
+                    <th width='20px'>Description</th>
+                    <th width='150px'>Start Time</th>
+                    <th>Location</th>
+                    <th>Organiser</th>
+                    <th>Capacity</th>
+                    <th width='80px'>Available Tickets</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in events %} <!--table of events-->
+                <tr>
+                    <td>{{entry.title}} </td>
+                    <td>{{entry.description}}</td>
+                    <td>{{entry.start_time}}</td>       
+                    <td>{{entry.location}}</td>
+                    <td>{{entry.organiser}}</td>
+                    <td>{{entry.capacity}}</td>
+                    <td>{{entry.availableTickets}}</td>
+                    <td>{{entry.duration}}</td>
+                    <td>
+                    <form action="{{ url_for('cancelTicket', event_id=entry.id) }}" method="post">
+                        <button type="submit" id ='cancelTicket' class="event large" aria-label="Cancel Ticket " style="width: 150px; height: 50px;">Cancel Ticket</button>
+                    </form> 
+                    </td>
+                        {%if entry.availableTickets > 0 %}
+                            <td><a href="{{ url_for('buyTickets', event_id=entry.id) }}" id ="buy" >Buy Tickets</a></td>
+                        {%else%}
+                        <td>Event Sold out</td>
+                        {% endif %}
+
+                        {% if entry.start_time < now %}
+                        <td>You can't buy tickets for past events/event already started </td>
+                        {%endif%}
+
+
+                        {% if  current_user.is_organiser%}
+                            {% if entry.is_cancelled %}
+                                <td>This event has been cancelled.</td>
+                            {% else %}
+                                <td>
+                                    <form action="{{ url_for('cancelEvent', event_id=entry.id) }}" method="post">
+                                        <button type="submit" id ='button' class="event large" style="width: 150px; height: 50px;">Cancel Event</button>
+                                    </form>
+                                    
+                                </td>
+                            {% endif %}
+                        {%endif%}
+
+                </tr>
+                {% else %}
+                <tr>
+                    <td>no entries</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="image-container"> <!--images which are needed for jquery UI. -->
+            <img src="https://royalmhotels.com/abudhabi/uploads/spa_and_wellness/image/1700x805/spa.jpg" class="image">
+            <img src="https://www.thespruce.com/thmb/lT-gFrmPL_4309REAGixzqlLMSw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/pink-birthday-cake-639239932-9cc8c23051334bfe8ba67d5020c72f4b.jpg" class="image">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dHJvcGljYWwlMjBiZWFjaHxlbnwwfHwwfHw%3D&w=1000&q=80" class="image">
+            <img src ="https://i0.wp.com/picjumbo.com/wp-content/uploads/new-years-toast-celebration-party-with-friends-free-photo.jpg?w=1024&quality=50" class="image">
+            <img src="https://images.pexels.com/photos/167491/pexels-photo-167491.jpeg?cs=srgb&dl=pexels-thibault-trillet-167491.jpg&fm=jpg" class="image">
+            <img src = "https://coasterpedia.net/w/images/thumb/1/1a/AmusementPark.jpg/800px-AmusementPark.jpg" class="image">
+        </div>
+
+        <script> //confirming the user wants to logout 
+            document.getElementById("logoutLink").addEventListener("click", function(event) {
+              event.preventDefault(); // prevent the link from opening a new page
+              var confirmLogout = confirm("Are you sure you want to logout?");
+              if (confirmLogout) {
+                // redirect to the logout page
+                window.location.href = "{{ url_for('logout') }}";
+              }
+            });
+          </script>
+
+
+        <script> //confirming the user wants to create an event 
+            document.getElementById("createEventLink").addEventListener("click", function(event) {
+            event.preventDefault(); // prevent the link from opening a new page
+            var confirmCreateEvent = confirm("Are you sure you want to create an event?");
+            if (confirmCreateEvent) {
+                // redirect to the page
+                window.location.href = "/createEvent";
+            }
+            });
+        </script>
+
+        <script> //confirming the user wants to promote 
+            document.getElementById("promote").addEventListener("click", function(event) {
+            event.preventDefault(); // prevent the link from opening a new page
+            var confirmPromotion = confirm("Are you sure you want to promote an attendee?");
+            if (confirmPromotion) {
+                // redirect to the page
+                window.location.href = "/promoteAttendeeToOrganiser";
+            }
+            });
+        </script>
+
+<script> //for user interaction and less crowded page if the user needs 
+
+    $(function () {
+
+        $("#show").resizable();
+        $("#hide").resizable();
+        $("#slide").resizable();
+        $("#fade").resizable();
+
+
+        $("#slide").click(function (event) {
+            $('img').slideUp();
+        })
+        $("#fade").click(function (event) {
+            $('img').fadeOut();
+        })
+        $("#hide").click(function (event) {
+            $('img').hide();
+        })
+        $("#show").click(function (event) {
+            $('img').show();
+        })
+    });
+</script>
+
+        
+    </body>
+</html>
+
+
+
+

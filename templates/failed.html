@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <title>The Giginator</title>
+    </head>
+    <body>
+        <h1>Computer Science Event Ticketer</h1>
+        <script>
+            $(function() {
+                // Display error message
+                $('#error-message').fadeIn().delay(5000).fadeOut();
+
+                // Redirect to homepage after 5 seconds
+                setTimeout(function() {
+                    window.location.href = '/homePage';
+                }, 1500);
+            });
+
+        </script>
+
+        <div id="error-message" style="display: none;">Failed in creating an item - You are not an organiser, hence can not create events!!</div>
+        <a href="/homePage">Home Page</a>
+    </body>
+</html>
+
+<!-- purpose of this template- to display flashed messages  -->

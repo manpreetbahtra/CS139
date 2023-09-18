@@ -1,0 +1,17 @@
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div class="notification is-danger">
+        {{ messages[-1] }} 
+    </div>
+    <!--Javascript code below to remove the flash after a few seconds-->
+    <script>
+        // Wait for 5 seconds and then remove the message
+        setTimeout(function() {
+          var message = document.querySelector('.notification');
+          message.parentNode.removeChild(message);
+        }, 5000);
+      </script>
+{% endif %}
+{% endwith %}
+
+<!-- purpose of this template- to display flashed messages  -->

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="static/css/main.css" type="text/css" charset="utf-8">
+        <title>The Giginator's Barcode</title>
+    </head>
+    <body>
+        <div class="navbar-end">
+            <a href="/myTickets" class="navbar-item"> 
+                Go back <!--allows users to go to the previous page-->
+            </a> 
+        </div>
+
+        <h1>Barcode</h1>
+        {{ svg_code|safe }}
+        <img class="barcode-image" src ="{{url_for('app.barcode', value=ticket.id)}}" alt="Barcode" >
+    </body>
+</html>
